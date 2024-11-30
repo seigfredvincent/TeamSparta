@@ -40,6 +40,7 @@ pipeline {
                         echo "Web Server IP Address: ${WEB_SERVER_IP}"
                     }
                 }
+                echo "Web Server IP Address: ${WEB_SERVER_IP}"
             }
         }
 
@@ -78,10 +79,6 @@ pipeline {
     post {
         always {
             echo 'Pipeline completed.'
-            script {
-                bat 'cd modules/vm/web && vagrant destroy -f'
-                //bat 'cd modules/vm/db && vagrant destroy -f'
-            }
         }
         success {
             echo 'Deployment successful!'
