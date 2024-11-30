@@ -8,13 +8,13 @@ variable "web_vm_box" {
 variable "web_vm_name" {
   description = "The name of the web server VM"
   type        = string
-  default     = "web-server"
+  default     = "webServer"
 }
 
 variable "web_vm_hostname" {
   description = "The hostname of the web server"
   type        = string
-  default     = "web-server.local"
+  default     = "webServer.local"
 }
 
 variable "web_vm_memory" {
@@ -39,13 +39,13 @@ variable "db_vm_box" {
 variable "db_vm_name" {
   description = "The name of the database server VM"
   type        = string
-  default     = "db-server"
+  default     = "dbServer"
 }
 
 variable "db_vm_hostname" {
   description = "The hostname of the database server"
   type        = string
-  default     = "db-server.local"
+  default     = "dbServer.local"
 }
 
 variable "db_vm_memory" {
