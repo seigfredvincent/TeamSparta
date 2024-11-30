@@ -79,7 +79,8 @@ pipeline {
         always {
             echo 'Pipeline completed.'
             script {
-                bat 'vagrant destroy -f'
+                bat 'cd modules/vm/web && vagrant destroy -f'
+                //bat 'cd modules/vm/db && vagrant destroy -f'
             }
         }
         success {
@@ -88,7 +89,8 @@ pipeline {
         failure {
             echo 'Deployment failed. See logs for details.'
             script {
-                bat 'vagrant destroy -f'
+                bat 'cd modules/vm/web && vagrant destroy -f'
+                bat 'cd modules/vm/db && vagrant destroy -f'
             }
         }
     }
