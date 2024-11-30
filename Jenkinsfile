@@ -30,8 +30,6 @@ pipeline {
             steps {
                 echo 'Starting Web Server VMs...'
                 script {
-                    // Destroy any existing web-server VM to avoid conflicts
-                    bat 'cd modules/vm/web && vagrant destroy -f'
                     def result = bat(script: 'cd modules/vm/web && vagrant up', returnStdout: true).trim()
                     echo "Vagrant Up Output: ${result}"
                     
