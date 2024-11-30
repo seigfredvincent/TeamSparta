@@ -1,0 +1,24 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.hostname = "web-server.local"
+
+  config.vm.network "private_network", ip: "192.168.56.10"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "web-server"
+    vb.memory = 1024
+    vb.cpus = 2
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "Provisioning web-server..."
+    #!/bin/bash
+echo "Setting up web server..."
+sudo apt-get update -y
+sudo apt-get install -y apache2 rsyslog ufw lynis
+sudo systemctl enable apache2
+sudo systemctl start apache2
+echo "Web server setup complete."
+
+  SHELL
+end

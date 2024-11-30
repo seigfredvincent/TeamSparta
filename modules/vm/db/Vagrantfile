@@ -1,0 +1,26 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.hostname = "db-server.local"
+
+  config.vm.network "private_network", ip: "192.168.56.11"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "db-server"
+    vb.memory = 1024
+    vb.cpus = 2
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "Provisioning db-server..."
+    #!/bin/bash
+echo "Setting up database server..."
+sudo apt-get update -y
+sudo apt-get install -y mysql-server rsyslog ufw lynis
+sudo ufw allow from ${var.web_private_ip} to any port 3306
+sudo ufw enable
+sudo systemctl enable mysql
+sudo systemctl start mysql
+echo "Database server setup complete."
+
+  SHELL
+end
