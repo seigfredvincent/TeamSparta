@@ -37,3 +37,6 @@ override.tf.json
 terraform.rc
 
 **/.mynotes/*
+
+#ignore vagrant
+**/.vagrant/*
