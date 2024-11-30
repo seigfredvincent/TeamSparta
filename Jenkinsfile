@@ -1,35 +1,66 @@
 pipeline {
     agent any
+    
+    environment {
+        WEB_SERVER_IP = ''
+        DB_SERVER_IP = ''
+    }
 
     stages {
-        stage('Security Check') {
+        stage('Security Check Web Server') {
             steps {
-                echo 'Running Vagrant Validation...'
+                echo 'Running Web Server Validation...'
                 script {
-                    bat 'vagrant validate'
+                    bat 'cd modules/vm/web && vagrant validate'
+                }
+            }
+        }
+
+        stage('Security Check DB Server') {
+            steps {
+                echo 'Running DB Server Validation...'
+                script {
+                    bat 'cd modules/vm/db && vagrant validate'
                 }
             }
         }
 
         // Deployment Stage
-        stage('Deploy VMs') {
+        stage('Deploy Web Server') {
             steps {
-                echo 'Starting Vagrant VMs...'
+                echo 'Starting Web Server VMs...'
                 script {
-                    bat 'vagrant up' 
+                    def result = bat(script: 'cd modules/vm/web && vagrant up', returnStdout: true).trim()
+                    echo "Vagrant Up Output: ${result}"
+                    
+                    // Extract Web Server IP address from vagrant up output
+                    def ipAddress = result =~ /inet (\d+\.\d+\.\d+\.\d+)/
+                    if (ipAddress) {
+                        WEB_SERVER_IP = ipAddress[0][1]
+                        echo "Web Server IP Address: ${WEB_SERVER_IP}"
+                    }
                 }
             }
         }
 
-        // Testing Web Server
-        stage('Testing Web Server') {
-            steps {
-                echo 'Testing Web Server Connectivity and Apache Status...'
-                script {
-                    bat '''vagrant ssh web_server -c "curl -I http://localhost | grep HTTP/1.1"'''
-                }
-            }
-        }
+        // stage('Deploy DB Server') {
+        //     steps {
+        //         echo 'Starting DB Server VMs...'
+        //         script {
+        //             bat 'cd modules/vm/db && vagrant up' 
+        //         }
+        //     }
+        // }
+
+        // // Testing Web Server
+        // stage('Testing Web Server') {
+        //     steps {
+        //         echo 'Testing Web Server Connectivity and Apache Status...'
+        //         script {
+        //             bat '''vagrant ssh web_server -c "curl -I http://localhost | grep HTTP/1.1"'''
+        //         }
+        //     }
+        // }
 
         // Testing Database Server
         // stage('Testing Database Server') {
@@ -47,6 +78,9 @@ pipeline {
     post {
         always {
             echo 'Pipeline completed.'
+            script {
+                bat 'vagrant destroy -f'
+            }
         }
         success {
             echo 'Deployment successful!'
